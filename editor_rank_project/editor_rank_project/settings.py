@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-n3_nfo_n&o7c%$q4#4g)9(pv(eah_1ek#y83uz0bv_4%&c==8k'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['keyske.pythonanywhere.com']
 
 
 # Application definition
@@ -128,3 +128,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ... ファイルの末尾に追加
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
