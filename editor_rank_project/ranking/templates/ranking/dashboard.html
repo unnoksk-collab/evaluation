@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ダッシュボード</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f4f4; }
+        .card { margin-top: 50px; }
+        .progress { height: 30px; font-size: 1rem; }
+        .history-card { margin-top: 30px; margin-bottom: 50px; }
+        .bg-gold {
+            background: linear-gradient(45deg, #fceabb, #f8b500, #fceabb);
+            color: #a06c00;
+            font-weight: bold;
+        }
+        /* ★★★ この部分を追加 ★★★ */
+        /* 一番上のプログレスバーの高さだけを1.5倍（30px -> 45px）にする */
+        .card.text-center .progress {
+            height: 45px;
+        }
+        /* 高さに合わせて中の文字サイズも少し大きくする */
+        .card.text-center .progress-bar {
+            font-size: 1.2rem;
+        }
+        /* 評価詳細のプログレスバーの高さを半分（15px）にする */
+        .history-card .progress {
+            height: 25px;
+        }
+        /* 高さに合わせて中の文字サイズも小さくする */
+        .history-card .progress-bar {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card text-center">
+            <div class="card-header">
+                <h2>{{ request.user.username }}さんのステータス</h2>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">
+                    現在のランク: 
+                    {% if editor.rank %}{{ editor.rank.name }}{% else %}ランクなし{% endif %}
+                </h3>
+                <p class="card-text fs-4">合計スコア: <strong>{{ editor.total_score }}</strong> pt</p>
+                <hr>
+                <h4>次の目標への道</h4>
+                {% if not is_fully_maxed %}
+                    <p>
+                        次の目標「<strong>{{ next_rank_display.name }}</strong>」まで残り 
+                        <strong>{{ points_to_next_rank }}</strong> pt
+                    </p>
+                    <div class="progress" role="progressbar">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated {{ progress_bar_color }}" 
+                             style="width: {{ progress_percentage }}%">
+                            {{ editor.total_score }} / {{ next_rank_display.required_score }}
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-warning fw-bold">全項目をマスターしました！おめでとうございます！🏆</p>
+                    <div class="progress" role="progressbar">
+                        <div class="progress-bar bg-gold" style="width: 100%;">PERFECT</div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-muted">
+                <a href="{% url 'logout' %}">ログアウト</a>
+            </div>
+        </div>
+
+        <div class="card history-card">
+            <div class="card-header">
+                <h4>評価詳細</h4>
+            </div>
+            <div class="card-body">
+                {% for category_data in dashboard_data %}
+                    <div class="mb-4">
+                        <h5>{{ category_data.top_category_name }} </h5>
+                        {% with progress=category_data.progress %}
+                            <div class="progress" role="progressbar">
+                                <div class="progress-bar {{ progress.color }} bg-opacity-75" style="width: {{ progress.percentage }}%">
+                                    {{ progress.user_score }} / {{ progress.max_score }} pt
+                                </div>
+                            </div>
+                        {% endwith %}
+                    </div>
+                
+                    <div class="accordion mb-3" id="accordion-{{ forloop.counter }}">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ forloop.counter }}">
+                                    <strong>詳細を開く</strong>
+                                </button>
+                            </h2>
+                            <div id="collapse-{{ forloop.counter }}" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    {% for skill_category, scores in category_data.skills %}
+                                        <h5 class="mt-3">{{ skill_category }}</h5>
+                                        <table class="table table-sm table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 50%;"></th>
+                                                    <th>スコア</th>
+                                                    <th>コメント</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for score in scores %}
+                                                <tr>
+                                                    <td>{{ score.item.name }}</td>
+                                                    <td>{{ score.score }} / {{ score.item.max_score }}</td>
+                                                    <td>{{ score.comment|linebreaksbr }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center">まだ評価はありません。</p>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

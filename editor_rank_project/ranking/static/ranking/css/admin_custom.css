@@ -1,0 +1,15 @@
+/* 評価一覧テーブルの中の、評価項目名の列だけをターゲットにする */
+/* これは変更なし */
+td.field-get_item_name {
+    font-size: 18px !important;
+    font-weight: bold !important;
+}
+
+/* ★★★ こちらを、より汎用的な指定方法に変更 ★★★ */
+/* 管理画面の「インライン」で表示されるテーブルのセルを直接指定 */
+.inline-group .tabular td,
+.inline-group .tabular th {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    line-height: 1.3 !important; /* 行間も詰める */
+}

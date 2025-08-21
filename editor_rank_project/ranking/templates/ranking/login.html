@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>ログイン</h2>
+        <form method="post">
+            
+            {# ★★★ This security tag is the fix ★★★ #}
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">ログイン</button>
+        </form>
+    </div>
+</body>
+</html>
